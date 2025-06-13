@@ -1,68 +1,120 @@
-﻿using System;
+﻿using DataAccess.DAOs;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DAO
+namespace DataAccess.DAOs
 {
-
-    /*
-     * Clase u objeto que se encarga de la comunicacion con la base de datos
-     * Solo ejecuta Stored Procedures
-     * 
-     * Esta clase implementa el Patron del Singleton
-     * para asegurar la existencia de una unica instancia de este objeto
-     * 
-     */
     public class SqlDao
     {
+
+        /*
+         * Clase u objeto que se encarga de la comunicacion con la
+         * base de datos
+         * Solo ejectura store procedures
+         * 
+         * Esta clase implementa un patron conocido como SINGLETON,
+         * para asegurar la existencia de una unica instancia
+         * del SQL DAO
+         */
+
         //Paso 1: Crear una instancia privada de la misma clase
         private static SqlDao _instance;
 
-        private String _connectionString;
+        private string _connectionString;
 
         //Paso 2: Redefinir el constructor default y convertirlo en privado
-        private SqlDao() 
+        private SqlDao()
         {
-            _connectionString = string.Empty;
-        
+            _connectionString = @"Data Source=.;Initial Catalog=shopping-cart-db2;Integrated Security=True;Trust Server Certificate=True";
         }
 
-        //Paso 3: Definir el metodo que expone la instancia
-        public static SqlDao getInstance()
-
-
+        //Paso 3: Definir el metodo que expone la unica instancia de SqlDao
+        public static SqlDao GetInstance()
         {
-            if( _instance == null )
+            if (_instance == null)
             {
                 _instance = new SqlDao();
-            }                
+            }
             return _instance;
-
         }
 
-        //Metodo para la ejecucion de SP sin retorno
-        public void ExecuteProcedure(SqlOperation operation)
-        {
-            //Conectarse a la base de datos
-            //Ejecutar el SP
+        //Metodo que permite ejectura un store procedure en la base de datos
+        // no genera retorno, solo en caso de excepciones retorna exception
 
+        public void ExecuteProcedure(SqlOperation sqlOperation)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                using (var command = new SqlCommand(sqlOperation.ProcedureName, conn)
+                {
+                    CommandType = System.Data.CommandType.StoredProcedure
+                })
+                {
+                    //Set de los parametros
+                    foreach (var param in sqlOperation.Parameters)
+                    {
+                        command.Parameters.Add(param);
+                    }
+                    //Ejectura el SP
+                    conn.Open();
+                    command.ExecuteNonQuery();
+                }
+
+            }
         }
-        //Metodo para la ejecucion de SP con retorno de data
-        public List<Dictionary<string, object>> ExecuteQueryProcedure(SqlOperation operation)
+
+        // procedimiento para ejectura SP Que retornan un set de datos
+        public List<Dictionary<string, object>> ExecuteQueryProcedure(SqlOperation sqlOperation)
         {
 
-            //Conectarse a la base de datos
-            //Ejecutar el SP
-            //Capturar el resuelto
-            //Convertirlo en DTOs
+            var lstResults = new List<Dictionary<string, object>>();
 
-            var list = new List<Dictionary<string, object>>();
-         
-            return list;
+            using (var conn = new SqlConnection(_connectionString))
+
+            {
+                using (var command = new SqlCommand(sqlOperation.ProcedureName, conn)
+                {
+                    CommandType = System.Data.CommandType.StoredProcedure
+                })
+                {
+                    //Set de los parametros
+                    foreach (var param in sqlOperation.Parameters)
+                    {
+                        command.Parameters.Add(param);
+                    }
+                    //Ejectura el SP
+                    conn.Open();
+
+                    //de aca en adelante la implementacion es distinta con respecto al procedure anterior
+                    // sentencia que ejectua el SP y captura el resultado
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+
+                            var rowDict = new Dictionary<string, object>();
+
+                            for (var index = 0; index < reader.FieldCount; index++)
+                            {
+                                var key = reader.GetName(index);
+                                var value = reader.GetValue(index);
+                                //aca agregamos los valores al diccionario de esta fila
+                                rowDict[key] = value;
+                            }
+                            lstResults.Add(rowDict);
+                        }
+                    }
+
+                }
+            }
+
+            return lstResults;
         }
     }
 }
