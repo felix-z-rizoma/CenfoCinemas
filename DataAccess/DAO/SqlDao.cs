@@ -22,7 +22,7 @@ namespace DataAccess.DAO
         //Paso 1: Crear una instancia privada de la misma clase
         private static SqlDao _instance;
 
-        private AnsiStringMarshaller _connectionString;
+        private String _connectionString;
 
         //Paso 2: Redefinir el constructor default y convertirlo en privado
         private SqlDao() 
