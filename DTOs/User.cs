@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DTOs
 {
-    internal class User
+    public class User : BaseDTO
     {
         public string UserCode {  get; set; }
         public string Name { get; set; }
@@ -15,6 +15,6 @@ namespace DTOs
         public DateTime BirthDate { get; set; }
         public string Status { get; set; }
 
- 
+      
     }
 }

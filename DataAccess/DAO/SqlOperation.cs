@@ -1,24 +1,19 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 
-namespace DataAccess.DAOs
+namespace DataAccess.DAO
 {
-
-    /*
-     * clase con instrucciones de lo que tiene que hacer el sql dao
-     */
-
     public class SqlOperation
     {
-
+        
         public string ProcedureName { get; set; }
         public List<SqlParameter> Parameters { get; set; }
-        public SqlOperation()
-        {
+
+        public SqlOperation() { 
             Parameters = new List<SqlParameter>();
         }
 
@@ -41,6 +36,7 @@ namespace DataAccess.DAOs
         {
             Parameters.Add(new SqlParameter(paramName, paramValue));
         }
+
 
     }
 }

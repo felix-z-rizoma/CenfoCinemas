@@ -1,4 +1,4 @@
-﻿using DataAccess.DAOs;
+﻿using DataAccess.DAO;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DAOs
+namespace DataAccess.DAO
 {
     public class SqlDao
     {
@@ -29,7 +29,7 @@ namespace DataAccess.DAOs
         //Paso 2: Redefinir el constructor default y convertirlo en privado
         private SqlDao()
         {
-            _connectionString = @"Data Source=.;Initial Catalog=shopping-cart-db2;Integrated Security=True;Trust Server Certificate=True";
+            _connectionString = @"Data Source=cenfotec-servidor.database.windows.net;Initial Catalog=cenfocinemas-db;Persist Security Info=True;User ID=sysman;Password=Cenfotec123!";
         }
 
         //Paso 3: Definir el metodo que expone la unica instancia de SqlDao
@@ -67,7 +67,7 @@ namespace DataAccess.DAOs
             }
         }
 
-        // procedimiento para ejectura SP Que retornan un set de datos
+
         public List<Dictionary<string, object>> ExecuteQueryProcedure(SqlOperation sqlOperation)
         {
 

@@ -1,4 +1,5 @@
-﻿using DataAccess.DAOs;
+﻿using DataAccess.DAO;
+using DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +26,9 @@ namespace DataAccess.CRUD
         public abstract void Update(BaseDTO baseDTO);
         public abstract void Delte(BaseDTO baseDTO);
 
-        public abstract T Retreive<T>;
-        public abstract T RetrieveById<T>();
+        public abstract T Retreive<T>();
+        public abstract T RetrieveById<T>(int id);
+        public abstract List<T> RetrieveAll<T>();
     }
 
 }
