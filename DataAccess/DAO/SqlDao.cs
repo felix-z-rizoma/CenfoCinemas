@@ -29,7 +29,7 @@ namespace DataAccess.DAO
         //Paso 2: Redefinir el constructor default y convertirlo en privado
         private SqlDao()
         {
-            _connectionString = @"Data Source=cenfotec-servidor.database.windows.net;Initial Catalog=cenfocinemas-db;Persist Security Info=True;User ID=sysman;Password=Cenfotec123!";
+            _connectionString = @"Data Source=cenfotec-fz-2.database.windows.net;Initial Catalog=cenfocinemas-db;Persist Security Info=True;User ID=sysman;Password=Cenfotec123!";
         }
 
         //Paso 3: Definir el metodo que expone la unica instancia de SqlDao

@@ -13,8 +13,10 @@ namespace CoreApp
 {
     public class UserManager : BaseManager
     {
-        public void Create(User user)
+        public async Task Create(User user)
         {
+
+
             try
             {
 
@@ -35,6 +37,7 @@ namespace CoreApp
                         {
                             uCrud.Create(user);
                             //Ahora sigue el envio de correo
+                            await SendWelcomeEmail(user);
                         }
                         else
                         {
@@ -60,6 +63,12 @@ namespace CoreApp
             }
         }
 
+        public List<User> RetrieveAll()
+        {
+            var uCrud=new UserCrudFactory();
+            return uCrud.RetrieveAll<User>();
+        }
+
         private bool isOver18(User user)
         {
             var currentDate= DateTime.Now;
@@ -76,7 +85,7 @@ namespace CoreApp
 
         async Task SendWelcomeEmail(User user)
         {
-            var apiKey = "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";
+            var apiKey = "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";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("fzumbadoz@ucenfotec.ac.cr", name: "Felix Zumbado");
             var subject = $"Bienvenido a CenfoCinemas, es un placer conocerte, {user.Name}!";

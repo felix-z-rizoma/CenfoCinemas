@@ -30,7 +30,7 @@ namespace DataAccess.CRUD
 
         }
 
-        public override void Delte(BaseDTO baseDTO)
+        public override void Delete(BaseDTO baseDTO)
         {
             throw new NotImplementedException();
         }

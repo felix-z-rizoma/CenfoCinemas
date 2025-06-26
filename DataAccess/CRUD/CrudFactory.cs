@@ -24,7 +24,7 @@ namespace DataAccess.CRUD
 
         public abstract void Create(BaseDTO baseDTO);
         public abstract void Update(BaseDTO baseDTO);
-        public abstract void Delte(BaseDTO baseDTO);
+        public abstract void Delete(BaseDTO baseDTO);
 
         public abstract T Retreive<T>();
         public abstract T RetrieveById<T>(int id);
