@@ -1,5 +1,10 @@
-﻿--SP para crear un usuario.
-CREATE PROCEDURE CRE_MOVIE_PR
+﻿/****** Object:  StoredProcedure [dbo].[CRE_MOVIE_PR]    Script Date: 6/29/2025 9:03:59 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+--SP para crear una pelicula
+ALTER PROCEDURE [dbo].[CRE_MOVIE_PR]
 	@P_Title nvarchar(75),
 	@P_Desc nvarchar(250),
 	@P_ReleaseDate Datetime,
@@ -11,4 +16,3 @@ CREATE PROCEDURE CRE_MOVIE_PR
 		INSERT INTO TBL_Movie(Created, Title, Description, ReleaseDate, Genre, Director)
 		VALUES(GetDate(),@P_Title,@P_Desc,@P_ReleaseDate,@P_Genre,@P_Director)
 	END
-	GO

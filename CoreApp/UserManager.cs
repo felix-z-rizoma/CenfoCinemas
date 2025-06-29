@@ -5,98 +5,155 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace CoreApp
 {
     public class UserManager : BaseManager
     {
+        private readonly UserCrudFactory _userCrudFactory;
+
+        public UserManager()
+        {
+            _userCrudFactory = new UserCrudFactory();
+        }
+
+
+
         public async Task Create(User user)
         {
-
-
             try
             {
+                ValidateUser(user);
+                await ValidateUniqueUser(user);
 
-                //Validar la edad
-                if (isOver18(user))
-                {
-                    var uCrud = new UserCrudFactory();
-                    uCrud.Create(user);
-                    //Consulatamos en la bd si existe un usuario con ese codigo
-                    var uExist = uCrud.RetrieveByUserCode<User>(user);
+                user.Created = DateTime.Now;
+                user.Status = "Active"; // Default status
 
-                    if (uExist != null )
-                    {
-                        //Consultamos si en la bd existe un usuario con ese email.
-                        uExist=uCrud.RetrieveByEmail<User>(user);
-
-                        if(uExist != null )
-                        {
-                            uCrud.Create(user);
-                            //Ahora sigue el envio de correo
-                            await SendWelcomeEmail(user);
-                        }
-                        else
-                        {
-                            throw new Exception("Este correo electronico ya se encuentra registrado");
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("El codigo de usuario no esta disponible");
-                    }
-
-                }
-                else
-                {
-                    throw new Exception("Usuario no cumple con la edad minima");
-                }
-
-
+                _userCrudFactory.Create(user);
+                await SendWelcomeEmail(user);
             }
             catch (Exception ex)
             {
                 ManageException(ex);
+                throw; // Re-throw after logging
             }
         }
 
         public List<User> RetrieveAll()
         {
-            var uCrud=new UserCrudFactory();
-            return uCrud.RetrieveAll<User>();
+            return _userCrudFactory.RetrieveAll<User>();
         }
 
-        private bool isOver18(User user)
+        public User RetrieveById(int id)
         {
-            var currentDate= DateTime.Now;
-            int age=currentDate.Year - user.BirthDate.Year;
+            var user = _userCrudFactory.RetrieveById<User>(id);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {id} not found");
 
-            if (user.BirthDate>currentDate.AddYears(-age).Date)
-            {
+            return user;
+        }
+
+        #region Private Methods
+
+        private void ValidateUser(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (!IsOver18(user))
+                throw new BusinessException("User must be at least 18 years old");
+
+            if (string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains("@"))
+                throw new BusinessException("Invalid email address");
+
+            if (string.IsNullOrWhiteSpace(user.Password) || user.Password.Length < 8)
+                throw new BusinessException("Password must be at least 8 characters");
+        }
+
+        private async Task ValidateUniqueUser(User user)
+        {
+            var existingByCode = _userCrudFactory.RetrieveByUserCode<User>(user);
+            if (existingByCode != null)
+                throw new BusinessException("User code already exists");
+
+            var existingByEmail = _userCrudFactory.RetrieveByEmail<User>(user);
+            if (existingByEmail != null)
+                throw new BusinessException("Email already registered");
+        }
+
+        public bool IsOver18(User user)
+        {
+            var today = DateTime.Today;
+            var age = today.Year - user.BirthDate.Year;
+
+            // Handle leap years
+            if (user.BirthDate.Date > today.AddYears(-age))
                 age--;
-            }
-            return age >= 18; 
 
-           
+            return age >= 18;
         }
 
-        async Task SendWelcomeEmail(User user)
+        private static async Task<bool> SendWelcomeEmail(User user)
         {
-            var apiKey = "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";
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("fzumbadoz@ucenfotec.ac.cr", name: "Felix Zumbado");
-            var subject = $"Bienvenido a CenfoCinemas, es un placer conocerte, {user.Name}!";
-            var to = new EmailAddress(user.Email, user.Name);
-            var plainTextContent = $"Hola {user.Name},\n\nGracias por registrarte en Cenfocinemas. Estamos emocionados de tenerte con nosotros.\n\nSaludos, \nCenfoCinemas Team";
-            var htmlContent = $"<strong>Hola {user.Name},</strong><br><br>Gracias por registrarte en CenfoCinemas. Estamos emocionados de tenerte con nosotros. <br> <br> Saludos, <br> CenfoCinemas Team";
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+            try
+            {
+                Console.WriteLine("[DEBUG] Starting SendWelcomeEmail");
 
-        }  
-            
+                var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    Console.WriteLine("[ERROR] SendGrid API key not found in environment variables.");
+                    return false;
+                }
+
+                if (!apiKey.StartsWith("SG."))
+                {
+                    Console.WriteLine("[ERROR] API key does not start with 'SG.'. Please check your SendGrid key.");
+                    return false;
+                }
+
+                Console.WriteLine($"[DEBUG] Loaded API Key (first 5 chars): {apiKey.Substring(0, 5)}...");
+
+                var client = new SendGridClient(apiKey);
+
+                var from = new EmailAddress("fzumbadoz@ucenfotec.ac.cr", "CenfoCinemas");
+                var to = new EmailAddress(user.Email, user.Name);
+                var subject = "Welcome to CenfoCinemas!";
+                var plainTextContent = "Thanks for signing up with CenfoCinemas!";
+                var htmlContent = "<strong>Thanks for signing up with CenfoCinemas!</strong>";
+
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+
+                var response = await client.SendEmailAsync(msg);
+
+                Console.WriteLine($"[DEBUG] Email response status: {response.StatusCode}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Body.ReadAsStringAsync();
+                    Console.WriteLine($"[DEBUG] SendGrid Response Body: {responseBody}");
+                }
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Failed to send email: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
+
+
+        #endregion
+    }
+
+    public class BusinessException : Exception
+    {
+        public BusinessException(string message) : base(message) { }
     }
 }

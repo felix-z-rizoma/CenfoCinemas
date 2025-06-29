@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DTOs
 {
-    public class Movie
+    public class Movie : BaseDTO
     {
         public string Title { get; set; }
         public string Description { get; set; }

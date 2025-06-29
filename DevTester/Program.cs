@@ -1,15 +1,14 @@
 ﻿using DataAccess.DAO;
 using DataAccess.CRUD;
 using DTOs;
-using System.ComponentModel.DataAnnotations;
+using System;
 using System.IO;
-using System.Reflection.Metadata;
 using Newtonsoft.Json;
 using CoreApp;
 
-
-public class Program{
-    public static void Main(string[] args)
+public class Program
+{
+    public static async Task Main(string[] args) 
     {
         Console.WriteLine("Seleccione la opcion deseada:");
         Console.WriteLine("1.Crear usuario.");
@@ -23,7 +22,6 @@ public class Program{
 
         var option = Int32.Parse(Console.ReadLine());
         var sqlOperation = new SqlOperation();
-        
 
         switch (option)
         {
@@ -45,7 +43,6 @@ public class Program{
                 Console.WriteLine("Digite la fecha de nacimiento");
                 var bdate = DateTime.Parse(Console.ReadLine());
 
-                //Creamos el objeto del usuario a partir de los valores capturados en cosnola
                 var user = new User()
                 {
                     UserCode = userCode,
@@ -57,24 +54,13 @@ public class Program{
                 };
 
                 var um = new UserManager();
-                um.Create(user);
-           
+                await um.Create(user);  // Await the async method call
 
-               
-            break;
-            
+                break;
+
             case 2:
-
-        /*     uCrud = new UserCrudFactory();
-             var listUsers = uCrud.RetrieveAll<User>();
-            foreach(var u in listUsers)
-            {
-            Console.WriteLine(JsonConvert.SerializeObject(u));
-            }
-
-             break;
-*/
-
+                // You can add implementation here
+                break;
 
             case 5:
                 Console.WriteLine("Digite el titulo");
@@ -92,23 +78,25 @@ public class Program{
                 Console.WriteLine("Digite el director");
                 var director = Console.ReadLine();
 
-                sqlOperation.ProcedureName = "CRE_MOVIE_PR";
-                sqlOperation.AddStringParameter("P_Titlee", title);
-                sqlOperation.AddStringParameter("P_Desc", desc);
-                sqlOperation.AddDateTimeParam("P_ReleaseDate", rDate);
-                sqlOperation.AddStringParameter("P_Genre", genre);
-                sqlOperation.AddStringParameter("P_Director", director);
+                //Create a Movie object from input
+                var movie = new Movie()
+                {
+                    Title = title,
+                    Description = desc,
+                    ReleaseDate = rDate,
+                    Genre = genre,
+                    Director = director
+                };
+
+                // Call the MovieManager
+                var mm = new MovieManager();
+               var createdMovie = await mm.Create(movie); // This will use CRUD factory and stored procedures
+
+                Console.WriteLine("Película creada exitosamente.");
+
+
 
                 break;
-        
-
-
         }
-        //Ejecucion del procedure
-        //var sqlDao = SqlDao.GetInstance();
-        //sqlDao.ExecuteProcedure(sqlOperation);
-
     }
-
-
 }

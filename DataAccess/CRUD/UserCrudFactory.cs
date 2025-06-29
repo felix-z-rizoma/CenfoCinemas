@@ -32,27 +32,40 @@ namespace DataAccess.CRUD
 
         public override void Delete(BaseDTO baseDTO)
         {
-            throw new NotImplementedException();
+            var user = baseDTO as User;
+            if (user == null)
+                throw new ArgumentException("Invalid DTO type - expected User");
+
+            var sqlOperation = new SqlOperation()
+            {
+                ProcedureName = "DEL_USER_PR"
+            };
+            sqlOperation.AddStringParameter("P_Title", user.UserCode);
+
+            _sqlDao.ExecuteProcedure(sqlOperation);
         }
 
         public override List<T> RetrieveAll<T>()
         {
-            var lstUsers=new List<T>();
+            var lstUsers = new List<T>();
 
             var sqlOperation = new SqlOperation() { ProcedureName = "RET_ALL_USERS_PR" };
+            var lstResults = _sqlDao.ExecuteQueryProcedure(sqlOperation);
 
-            var lstResults= _sqlDao.ExecuteQueryProcedure(sqlOperation);
-
-            if (lstUsers.Count > 0) {
-
-                foreach (var row in lstResults) {
-                    var user=BuildUser(row);
+           
+            if (lstResults.Count > 0)
+            {
+                foreach (var row in lstResults)
+                {
+                    var user = BuildUser(row);  
                     lstUsers.Add((T)Convert.ChangeType(user, typeof(T)));
                 }
             }
-            return lstUsers;
 
+            Console.WriteLine($"[DEBUG] Retrieved {lstUsers.Count} users from database.");
+            return lstUsers;
         }
+
 
 
         public override T RetrieveById<T>(int id)
@@ -109,15 +122,48 @@ namespace DataAccess.CRUD
 
         }
 
-        public override T Retreive<T>()
+        public override T Retrieve<T>()
         {
-            throw new NotImplementedException();
-        }
+        
+            var sqlOperation = new SqlOperation()
+            {
+                ProcedureName = "RET_USER_PR"
+            };
 
+            var result = _sqlDao.ExecuteQueryProcedure(sqlOperation);
+
+            if (result.Count == 0)
+                return default(T);
+
+            var user = BuildUser(result[0]);
+            return (T)Convert.ChangeType(user, typeof(T));
+        }
 
         public override void Update(BaseDTO baseDTO)
         {
-            throw new NotImplementedException();
+            var user = baseDTO as User;
+            if (user == null)
+                throw new ArgumentException("Invalid DTO type - expected User");
+
+            var sqlOperation = new SqlOperation()
+            {
+                ProcedureName = "UPD_USER_PR"
+            };
+
+            sqlOperation.AddIntParam("P_Id", user.Id);
+            sqlOperation.AddStringParameter("P_UserCode", user.UserCode);
+            sqlOperation.AddStringParameter("P_Name", user.Name);
+            sqlOperation.AddStringParameter("P_Email", user.Email);
+            sqlOperation.AddStringParameter("P_Status", user.Status);
+            sqlOperation.AddDateTimeParam("P_BirthDate", user.BirthDate);
+
+            // Optional: Only update password if provided
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                sqlOperation.AddStringParameter("P_Password", user.Password);
+            }
+
+            _sqlDao.ExecuteProcedure(sqlOperation);
         }
 
 
