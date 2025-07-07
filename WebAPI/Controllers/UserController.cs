@@ -203,7 +203,7 @@ namespace WebAPI.Controllers
                 // Add business logic validation if needed
                 var um = new UserManager();
                 if (!um.IsOver18(user))
-                {.
+                {
                     return BadRequest(new
                     {
                         Success = false,
