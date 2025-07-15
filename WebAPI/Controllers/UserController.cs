@@ -237,26 +237,25 @@ namespace WebAPI.Controllers
                 });
             }
         }
-
         [HttpDelete]
         [Route("Delete")]
-        public ActionResult Delete(int id)
+        public ActionResult Delete([FromBody] User user)
         {
             try
             {
                 var uCrud = new UserCrudFactory();
-                var user = uCrud.RetrieveById<User>(id);
+                var existingUser = uCrud.RetrieveById<User>(user.Id);
 
-                if (user == null)
+                if (existingUser == null)
                     return NotFound(new
                     {
                         Success = false,
-                        Message = $"Usuario con ID {id} no encontrado"
+                        Message = $"Usuario con ID {user.Id} no encontrado"
                     });
 
                 uCrud.Delete(user);
 
-                return NoContent(); // 204 No Content is standard for successful DELETE
+                return NoContent(); // 204 No Content
             }
             catch (Exception ex)
             {
@@ -267,5 +266,6 @@ namespace WebAPI.Controllers
                 });
             }
         }
+
     }
 }

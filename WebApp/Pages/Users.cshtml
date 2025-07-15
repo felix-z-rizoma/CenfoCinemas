@@ -2,11 +2,9 @@
 @model WebApp.Pages.UsersModel
 @{
 }
-<script src="~/js/pages/users.js"></script>
 
 <h1>User Page</h1>
 <div class="bs-docs-section">
-
     <div class="row">
         <legend>Users list</legend>
         <div class="col-lg-12">
@@ -19,15 +17,64 @@
                         <th>Email</th>
                         <th>Birth Date</th>
                         <th>Status</th>
-
-
                     </tr>
-
-
                 </thead>
-
             </table>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="bs-component">
+                <form>
+                    <fieldset>
+                        <legend>User form</legend>
+
+                        <div class="form-group">
+                            <label for="txtId" class="form-label mt-4">User ID</label>
+                            <input id="txtId" readonly type="number" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtUserCode" class="form-label mt-4">User code</label>
+                            <input id="txtUserCode" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtName" class="form-label mt-4">Name</label>
+                            <input id="txtName" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtEmail" class="form-label mt-4">Email</label>
+                            <input id="txtEmail" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtBirthDate" class="form-label mt-4">Birth Date</label>
+                            <input id="txtBirthDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtStatus" class="form-label mt-4">Status</label>
+                            <input id="txtStatus" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtPassword" class="form-label mt-4">Password</label>
+                            <input id="txtPassword" type="password" class="form-control" />
+                        </div>
+
+                    </fieldset>
+                </form>
+
+                <br />
+                <button id="btnCreate" class="source-button btn btn-primary btn-xs" type="button">Save</button>
+                <button id="btnUpdate" class="source-button btn btn-info btn-xs" type="button">Update</button>
+                <button id="btnDelete" class="source-button btn btn-danger btn-xs" type="button">Delete</button>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="~/js/pages/users.js"></script>

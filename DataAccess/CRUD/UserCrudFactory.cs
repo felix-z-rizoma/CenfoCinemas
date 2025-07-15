@@ -40,7 +40,7 @@ namespace DataAccess.CRUD
             {
                 ProcedureName = "DEL_USER_PR"
             };
-            sqlOperation.AddStringParameter("P_Title", user.UserCode);
+            sqlOperation.AddStringParameter("P_UserCode", user.UserCode);
 
             _sqlDao.ExecuteProcedure(sqlOperation);
         }
