@@ -1,6 +1,6 @@
 ﻿function ControlActions() {
 	//Ruta base del API
-	this.URL_API = "https://localhost:7125/api/";
+	this.URL_API = "cenfocinemas-fz-bkdfhdeydgg3dkbs.westus2-01.azurewebsites.net/";
 
 	this.GetUrlApiService = function (service) {
 		return this.URL_API + service;

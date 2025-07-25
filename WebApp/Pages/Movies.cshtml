@@ -27,12 +27,54 @@
         </div>
     </div>
 
+    <div class="row mt-5">
+        <div class="col-lg-6">
+            <div class="bs-component">
+                <form>
+                    <fieldset>
+                        <legend>Movie Form</legend>
+
+                        <div class="form-group">
+                            <label for="txtId" class="form-label mt-4">Movie ID</label>
+                            <input id="txtId" readonly type="number" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtTitle" class="form-label mt-4">Title</label>
+                            <input id="txtTitle" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtDescription" class="form-label mt-4">Description</label>
+                            <input id="txtDescription" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtReleaseDate" class="form-label mt-4">Release Date</label>
+                            <input id="txtReleaseDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtGenre" class="form-label mt-4">Genre</label>
+                            <input id="txtGenre" type="text" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtDirector" class="form-label mt-4">Director</label>
+                            <input id="txtDirector" type="text" class="form-control" />
+                        </div>
+                    </fieldset>
+                </form>
+
+                <br />
+                <button id="btnCreate" class="source-button btn btn-primary btn-xs" type="button">Save</button>
+                <button id="btnUpdate" class="source-button btn btn-info btn-xs" type="button">Update</button>
+                <button id="btnDelete" class="source-button btn btn-danger btn-xs" type="button">Delete</button>
+            </div>
+
    
 </div>
 
-<!-- Scripts -->
-<link href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+
 
 <script src="~/js/pages/movies.js" asp-append-version="true"></script>
