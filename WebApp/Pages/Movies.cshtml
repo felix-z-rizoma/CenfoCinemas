@@ -1,0 +1,38 @@
+﻿@page
+@{
+    Layout = "_Layout"; // or your layout file name
+    ViewData["Title"] = "Movies";
+}
+
+<h1>Movies List</h1>
+
+<div class="bs-docs-section">
+    <div class="row">
+        <legend>Movies List</legend>
+        <div class="col-lg-12">
+            <table id="tblMovies" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Release Date</th>
+                        <th>Genre</th>
+                        <th>Director</th>
+                        <th>Created</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+   
+</div>
+
+<!-- Scripts -->
+<link href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+
+<script src="~/js/pages/movies.js" asp-append-version="true"></script>
